@@ -1,4 +1,5 @@
 import pygame as pg
+from random import *
 
 
 class Bola:
@@ -7,6 +8,7 @@ class Bola:
         self.center_y = center_y
         self.radio = radio
         self.color= color
+        
 
         self.vx = 0
         self.vy = 0
@@ -24,7 +26,24 @@ class Bola:
             self.center_x = x_max // 2
             self.center_y = y_max // 2
             self.vx *= -1 
-            self.vy *= -1
+            self.vy = randint(-5,5)
+    
+    @property
+    def izquierda(self):
+        return self.center_x - self.radio
+    
+
+    @property
+    def derecha(self):
+        return self.center_x + self.radio
+    
+    @property
+    def arriba(self):
+        return self.center_y - self.radio
+    
+    @property
+    def abajo(self):
+        return self.center_y + self.radio
         
 
 class Raqueta:
@@ -56,4 +75,20 @@ class Raqueta:
          #   self.center_y += self.vy
         #if self.center_y > y_max - self.h //2:
         #    self.center_y = y_max - self.h // 2
+
+    @property
+    def arriba(self):
+        return self.center_y - self.h //2
+
+    @property    
+    def derecha(self):
+        return self.center_x + self.w // 2
+
+    @property
+    def abajo(self):
+        return self.center_y + self.h // 2
+
+    @property
+    def izquierda(self):
+        return self.center_x - self.w // 2
        

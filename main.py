@@ -40,4 +40,11 @@ while not game_over:
     raqueta2.mover(pg.K_UP, pg.K_DOWN)
     bola.mover()
 
+    if bola.izquierda <= raqueta1.derecha and bola.abajo >= raqueta1.arriba and bola.arriba <= raqueta1.abajo and bola.izquierda >= raqueta1.izquierda:
+        bola.vx *= -1
+        
+    if bola.derecha >= raqueta2.izquierda and bola.abajo >= raqueta2.arriba and bola.arriba <= raqueta2.abajo and bola.derecha <= raqueta2.derecha:
+        bola.vx *= -1
+
+
     pg.display.flip()
