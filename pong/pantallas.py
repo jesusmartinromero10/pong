@@ -27,19 +27,36 @@ class Partida:
         self.fuenteTemporizador = pg.font.Font("pong/font/Silkscreen.ttf", 20)
         #self.cronometro2 = pg.time.Clock()
         self.color_fondo = NEGRO
+        self.contador_fotograma = 0
+        self.fondoPantalla = NEGRO
 
     
     def fijar_fondo(self):
-        if self.temporizador > PRIMER_AVISO:
+        self.contador_fotograma += 1
 
-            self.color_fondo = NEGRO
-            return NEGRO
+        if self.temporizador > PRIMER_AVISO:
+            self.contador_fotograma = 0
+            
+            
         elif self.temporizador > SEGUNDO_AVISO:
-            self.color_fondo = NARANJA
-            return NARANJA
+            if self.contador_fotograma == 10:
+                if self.fondoPantalla == NEGRO:
+                    self.fondoPantalla = NARANJA
+                else:
+                    self.fondoPantalla = NEGRO
+                self.contador_fotograma = 0
+            
+            
+            
         else:
-            self.color_fondo = ROJO 
-            return ROJO
+            if self.contador_fotograma >= 5:
+                if self.fondoPantalla == ROJO:
+                    self.fondoPantalla = NEGRO
+                else:
+                    self.fondoPantalla = ROJO
+                self.contador_fotograma = 0
+
+        return self.fondoPantalla
 
     def bucle_ppal(self):
         self.bola.vx = 5
