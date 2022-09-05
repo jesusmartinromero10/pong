@@ -1,6 +1,6 @@
 import pygame as pg
 from pong.entities import Bola, Raqueta
-from pong import ALTO, AMARILLO,ANCHO,BLANCO,NEGRO, FPS, COLOR2, ROJO
+from pong import ALTO, AMARILLO,ANCHO,BLANCO, NARANJA,NEGRO, FPS, COLOR2, PRIMER_AVISO, ROJO, SEGUNDO_AVISO, TIEMPO_MAXIMO_PARTIDA
 
 
 
@@ -21,38 +21,48 @@ class Partida:
         self.duracion = 15
         self.puntuacion1 = 0
         self.puntuacion2 = 0 
-        #self.cronometro = 0
+        self.temporizador = TIEMPO_MAXIMO_PARTIDA
         self.fuente_marcador = pg.font.Font("pong/font/Silkscreen.ttf", 40)
-        self.fuente_cuenta = pg.font.Font("pong/font/Silkscreen.ttf", 20)
-        self.cronometro2 = pg.time.Clock()
+        #self.fuente_cuenta = pg.font.Font("pong/font/Silkscreen.ttf", 20)
+        self.fuenteTemporizador = pg.font.Font("pong/font/Silkscreen.ttf", 20)
+        #self.cronometro2 = pg.time.Clock()
+        self.color_fondo = NEGRO
+
+    
+    def fijar_fondo(self):
+        if self.temporizador > PRIMER_AVISO:
+
+            self.color_fondo = NEGRO
+            return NEGRO
+        elif self.temporizador > SEGUNDO_AVISO:
+            self.color_fondo = NARANJA
+            return NARANJA
+        else:
+            self.color_fondo = ROJO 
+            return ROJO
+
     def bucle_ppal(self):
         self.bola.vx = 5
         self.bola.vy = -5
         cronometro = 0
         game_over = False
-        velo1 = self.bola.vx * 1.2
+        velo1 = self.duracion * 1000 // 3
         velo2 = self.bola.vx * 1.5
 
         while not game_over and \
             self.puntuacion1 < 10 and \
-            self.puntuacion2 < 10:
+            self.puntuacion2 < 10 and \
+            self.temporizador > 0:
            
-            self.metronomo.tick(FPS)
+            salto_tiempo = self.metronomo.tick(FPS)
+            self.temporizador -= salto_tiempo
             
             
             for evento in pg.event.get():
                 if evento.type == pg.QUIT:
                     game_over = True
             
-            if cronometro < 15000:
-                
-                cronometro += self.cronometro2.tick()
-            elif cronometro > 1500:
-                game_over = True
             
-           
-            
-            print(cronometro)
 
             self.raqueta1.mover(pg.K_w, pg.K_s)
             self.raqueta2.mover(pg.K_UP, pg.K_DOWN)
@@ -70,20 +80,33 @@ class Partida:
             #if self.puntuacion1 > 9 or self.puntuacion2 > 9:
             #    game_over = True    
             self.bola.comprobar_choque(self.raqueta1, self.raqueta2)
-            self.pantalla_principal.fill((NEGRO))
-            cambio = self.duracion - cronometro / 1000
-            if cambio < 3:
+
+
+            
+
+            
+            self.pantalla_principal.fill(self.fijar_fondo())
+            
+
+
+
+
+
+
+            #cambio = self.duracion - cronometro / 1000
+            """if self.temporizador < 3000:
                 self.pantalla_principal.fill((ROJO))
-                if cambio < 2.5:
+                if self.temporizador < 2500:
                     self.pantalla_principal.fill((COLOR2))
-                if cambio < 2:
+                if self.temporizador < 2000:
                     self.pantalla_principal.fill((ROJO))
-                if cambio < 1.5:
+                if self.temporizador < 1500:
                     self.pantalla_principal.fill((COLOR2))
-                if cambio < 1:
+                if self.temporizador < 1000:
                     self.pantalla_principal.fill((ROJO))
-                if cambio < 0.5:
+                if self.temporizador < 500:
                     self.pantalla_principal.fill((COLOR2))
+                    """
             
             
             self.bola.dibujar(self.pantalla_principal)
@@ -95,26 +118,28 @@ class Partida:
             p2 = self.fuente_marcador.render(str(self.puntuacion2), True, BLANCO)
             
             self.pantalla_principal.blit(p2, (ANCHO - 50,10))
-            contador = self.fuente_cuenta.render(str(f"{self.duracion - cronometro // 1000}"), True, BLANCO)
-            self.pantalla_principal.blit(contador, (ANCHO - 400,10))
+            contador = self.fuenteTemporizador.render(str(f"{self.temporizador / 1000}"), True, BLANCO)
+            self.pantalla_principal.blit(contador, (ANCHO // 2,10))
             
            
 
 
             
             
-            if cronometro < 5000:
+            
+            """if self.duracion - cronometro // 1000 > 10:
                 pass
                 print(self.bola.vx)
                 
-            elif cronometro < 10000:
-                self.bola.mover(vx = 3)
+            elif self.duracion - cronometro // 1000 > 5:
+                self.bola.vx = 3
                 print(self.bola.vx)
                 
-            elif cronometro < 15000:
+            elif self.duracion - cronometro // 1000 < 5:
                 self.bola.mover(vx = 4)
+              
                 print(self.bola.vx)
-            
+            """
 
 
             pg.display.flip()
