@@ -173,16 +173,18 @@ class Menu:
         self.metronomo = metronomo
         self.imagenFondo = pg.image.load("pong/images/pinpong.jpeg")
         self.fuenteComenzar = pg.font.Font("pong/font/Silkscreen.ttf", 50)
-    
+        self.musica = pg.mixer.Sound("pong/sons/Duelo.ogg")
 
 
     def bucle_ppal(self):
         game_over = False
+        self.musica.play(-1)
 
         while not game_over:
             for evento in pg.event.get():
                 if evento.type == pg.QUIT:
                     #game_over = True
+                    
                     return True
                 
                 if evento.type == pg.KEYDOWN:
@@ -193,3 +195,5 @@ class Menu:
             menu = self.fuenteComenzar.render("Pulsa ENTER para comenzar", True, MAGENTA)
             self.pantalla_principal.blit(menu, (ANCHO // 2, ALTO - 200))
             pg.display.flip()
+            
+        self.musica.stop()
