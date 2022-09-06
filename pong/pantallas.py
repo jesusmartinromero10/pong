@@ -1,6 +1,6 @@
 import pygame as pg
 from pong.entities import Bola, Raqueta
-from pong import ALTO, AMARILLO,ANCHO,BLANCO, NARANJA,NEGRO, FPS, COLOR2, PRIMER_AVISO, ROJO, SEGUNDO_AVISO, TIEMPO_MAXIMO_PARTIDA
+from pong import ALTO, AMARILLO,ANCHO,BLANCO, MAGENTA, NARANJA,NEGRO, FPS, COLOR2, PRIMER_AVISO, PUNTUACION_GANADORA, ROJO, SEGUNDO_AVISO, TIEMPO_MAXIMO_PARTIDA
 
 
 
@@ -8,10 +8,11 @@ from pong import ALTO, AMARILLO,ANCHO,BLANCO, NARANJA,NEGRO, FPS, COLOR2, PRIMER
 pg.init()
 
 class Partida:
-    def __init__(self):
-        self.pantalla_principal = pg.display.set_mode((ANCHO, ALTO))
+    def __init__(self, pantalla, metronomo):
+        self.pantalla_principal = pantalla
         pg.display.set_caption("Pong")
-        self.metronomo = pg.time.Clock()
+        self.metronomo = metronomo
+        self.temporizador = TIEMPO_MAXIMO_PARTIDA
 
         self.bola = Bola(ANCHO//2, ALTO//2, color=BLANCO)
         self.raqueta1 = Raqueta(20, ALTO//2, color=(BLANCO))
@@ -21,7 +22,7 @@ class Partida:
         self.duracion = 15
         self.puntuacion1 = 0
         self.puntuacion2 = 0 
-        self.temporizador = TIEMPO_MAXIMO_PARTIDA
+        
         self.fuente_marcador = pg.font.Font("pong/font/Silkscreen.ttf", 40)
         #self.fuente_cuenta = pg.font.Font("pong/font/Silkscreen.ttf", 20)
         self.fuenteTemporizador = pg.font.Font("pong/font/Silkscreen.ttf", 20)
@@ -61,14 +62,17 @@ class Partida:
     def bucle_ppal(self):
         self.bola.vx = 5
         self.bola.vy = -5
-        cronometro = 0
-        game_over = False
-        velo1 = self.duracion * 1000 // 3
-        velo2 = self.bola.vx * 1.5
+        self.puntuacion1 = 0
+        self.puntuacion2 = 0
+        self.temporizador =TIEMPO_MAXIMO_PARTIDA
+        
 
+        game_over = False
+        
+        self.metronomo.tick()
         while not game_over and \
-            self.puntuacion1 < 10 and \
-            self.puntuacion2 < 10 and \
+            self.puntuacion1 < PUNTUACION_GANADORA and \
+            self.puntuacion2 < PUNTUACION_GANADORA and \
             self.temporizador > 0:
            
             salto_tiempo = self.metronomo.tick(FPS)
@@ -77,7 +81,8 @@ class Partida:
             
             for evento in pg.event.get():
                 if evento.type == pg.QUIT:
-                    game_over = True
+                    #game_over = True
+                    return True
             
             
 
@@ -159,4 +164,32 @@ class Partida:
             """
 
 
+            pg.display.flip()
+
+class Menu:
+    def __init__(self, pantalla, metronomo):
+        self.pantalla_principal = pantalla
+        pg.display.set_caption("Menu")
+        self.metronomo = metronomo
+        self.imagenFondo = pg.image.load("pong/images/pinpong.jpeg")
+        self.fuenteComenzar = pg.font.Font("pong/font/Silkscreen.ttf", 50)
+    
+
+
+    def bucle_ppal(self):
+        game_over = False
+
+        while not game_over:
+            for evento in pg.event.get():
+                if evento.type == pg.QUIT:
+                    #game_over = True
+                    return True
+                
+                if evento.type == pg.KEYDOWN:
+                    if evento.key == pg.K_RETURN:
+                        game_over = True
+
+            self.pantalla_principal.blit(self.imagenFondo, (0, 0))
+            menu = self.fuenteComenzar.render("Pulsa ENTER para comenzar", True, MAGENTA)
+            self.pantalla_principal.blit(menu, (ANCHO // 2, ALTO - 200))
             pg.display.flip()
